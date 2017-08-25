@@ -5,20 +5,16 @@ import * as actions from '../actions';
 
 class AuthScreen extends Component {
     componentDidMount() {
-        AsyncStorage.removeItem('fb_token');
+        // AsyncStorage.removeItem('fb_token'); // Uncomment this to test Facebook login
         this.props.facebookLogin();
-        debugger
         this.onAuthComplete(this.props); // This line is not necessary
-        AsyncStorage.removeItem('fb_token');
     }
 
     componentWillReceiveProps(nextProps) {
-        debugger
         this.onAuthComplete(nextProps);
     }
 
     onAuthComplete(props) {
-        debugger
         if (props.token) {
             this.props.navigation.navigate('map');
         }
