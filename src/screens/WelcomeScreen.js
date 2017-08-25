@@ -14,7 +14,7 @@ class WelcomeScreen extends Component {
     state = { token: null }
 
     async componentWillMount() {
-        AsyncStorage.removeItem('fb_token');
+        // AsyncStorage.removeItem('fb_token'); // Uncomment this to test Facebook login
         let token = await AsyncStorage.getItem('fb_token');
         
         if (token) {
