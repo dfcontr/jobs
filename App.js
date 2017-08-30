@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation';
-import Expo from 'expo';
+import Expo, { Notifications } from 'expo';
 import { Provider } from 'react-redux';
 
 import store from './src/store';
@@ -11,8 +11,26 @@ import MapScreen from './src/screens/MapScreen';
 import DeckScreen from './src/screens/DeckScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import ReviewScreen from './src/screens/ReviewScreen';
+import registerForNotifications from './services/push_notifications';
 
 export default class App extends React.Component {
+  componentDidMount() {
+    registerForNotifications();
+    Notifications.addListener((notification) => {
+      // The notification is not being received, debugger not being hit
+      debugger;
+      const { data: { text }, origin } = notification; // = const text = notification.data.text
+
+      if (origin === 'received' && text) {
+        Alert.alert(
+          'New Push Notification',
+          text,
+          [{ text: 'Ok' }]
+        );
+      }   
+    });
+  }
+
   render() {
     // Big gotcha: whenever React Navigation renders one of your navigators (all navigators?),
     // it instantly renders all of the screens within that navigator
@@ -29,6 +47,12 @@ export default class App extends React.Component {
               settings: { screen: SettingsScreen }
             })
           }
+        }, {
+          tabBarPosition: 'bottom',
+          swipeEnabled: false,
+          tabBarOptions: {
+            labelStyle: { fontSize: 12 }
+          }
         })
       }
     }, {
@@ -40,11 +64,17 @@ export default class App extends React.Component {
 
     // Wrapping navigator with view might not be the best solution,
     // but I have not make it work with the headerStyle navigationOption
-    return (
+    /*return (
       <Provider store={store}>
         <View style={{ flex: 1, marginTop: Expo.Constants.statusBarHeight }}>
           <MainNavigator />
         </View>
+      </Provider>
+    );*/
+
+    return (
+      <Provider store={store}>
+        <MainNavigator />
       </Provider>
     );
   }
